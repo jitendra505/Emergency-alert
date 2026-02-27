@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Alert System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .landing-nav { background: var(--bg-dark); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+    .landing-nav .navbar-brand { display: flex; align-items: center; gap: 12px; color: var(--text-light); font-weight: 700; font-size: 1.15rem; }
+    .landing-nav .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .landing-nav .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-nav { padding: 8px 20px; font-size: 0.88rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font); transition: var(--transition-fast); }
+    .btn-nav-outline { background: transparent; color: var(--text-light); border: 1.5px solid rgba(255,255,255,0.2); }
+    .btn-nav-outline:hover { border-color: var(--accent); color: var(--accent-light); }
+    .btn-nav-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white; }
+    .btn-nav-primary:hover { opacity: 0.9; }
+    .hero { text-align: center; padding: 80px 20px 50px; background: linear-gradient(135deg, var(--bg-dark) 0%, #1e3a5f 100%); color: var(--text-light); }
+    .hero-icon { font-size: 4rem; margin-bottom: 20px; }
+    .hero h1 { font-size: 2.6rem; font-weight: 800; margin-bottom: 12px; color: white; }
+    .hero p { font-size: 1.15rem; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero-actions .btn { padding: 14px 32px; font-size: 1rem; }
+    .section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 40px; }
+    .section-header h2 { font-size: 1.8rem; margin-bottom: 8px; }
+    .section-header p { color: var(--text-muted); font-size: 1rem; }
+    .live-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .live-stat { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-out); padding: 24px; text-align: center; transition: var(--transition); }
+    .live-stat:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .live-stat .stat-number { font-size: 2.2rem; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+    .live-stat .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+    .type-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+    .type-card { background: var(--bg-card); border-radius: var(--radius-sm); box-shadow: var(--shadow-out-sm); padding: 20px; display: flex; align-items: center; gap: 14px; transition: var(--transition); }
+    .type-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .type-card .type-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .type-card .type-count { font-size: 1.3rem; font-weight: 800; line-height: 1; }
+    .type-card .type-label { font-size: 0.8rem; color: var(--text-muted); }
+    .recent-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .recent-table th { text-align: left; padding: 10px 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .recent-table td { padding: 14px 16px; font-size: 0.9rem; background: var(--bg-card); }
+    .recent-table tr td:first-child { border-radius: 10px 0 0 10px; }
+    .recent-table tr td:last-child { border-radius: 0 10px 10px 0; }
+    .recent-table tbody tr { box-shadow: var(--shadow-out-sm); transition: var(--transition); }
+    .recent-table tbody tr:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .feature-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-out); padding: 28px; transition: var(--transition); }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .feature-card .feature-icon { font-size: 2rem; margin-bottom: 14px; }
+    .feature-card h4 { margin-bottom: 8px; }
+    .feature-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+    .landing-footer { background: var(--bg-dark); color: var(--text-muted); text-align: center; padding: 24px; font-size: 0.85rem; }
+    .severity-bar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; gap: 2px; margin-top: 16px; }
+    .severity-bar > div { border-radius: 4px; transition: width 0.5s ease; }
+    .loading-placeholder { text-align: center; padding: 30px; color: var(--text-muted); }
+    .auth-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px; backdrop-filter: blur(5px); overflow-y: auto; }
+    .auth-modal-overlay.hidden { display: none; }
+    @media (max-width: 768px) { .hero h1 { font-size: 1.8rem; } .hero p { font-size: 1rem; } .hero { padding: 50px 16px 40px; } .section { padding: 40px 16px; } .landing-nav { padding: 0 16px; } }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="landing-nav">
+    <div class="navbar-brand">
+      <div class="logo-icon">🚨</div>
+      <span>Emergency Alert System</span>
+    </div>
+    <div class="nav-actions" id="navActions">
+      <button class="btn-nav btn-nav-outline" onclick="openAuthModal('login')">Sign In</button>
+      <button class="btn-nav btn-nav-primary" onclick="openAuthModal('register')">Register</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-icon">🚨</div>
+    <h1>Real-Time Emergency Alert System</h1>
+    <p>Report emergencies instantly. Track response in real-time. Help make your community safer with our rapid incident reporting platform.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="openAuthModal('register')">🆘 Report Emergency</button>
+      <button class="btn" onclick="document.getElementById('statsSection').scrollIntoView({behavior:'smooth'})">📊 View Live Stats</button>
+    </div>
+  </section>
+
+  <!-- Live Stats -->
+  <section class="section" id="statsSection">
+    <div class="section-header">
+      <h2>📊 Live System Statistics</h2>
+      <p>Real-time data from our emergency response network</p>
+    </div>
+    <div class="live-stats-grid" id="mainStats">
+      <div class="live-stat"><div class="stat-number" style="color: var(--accent);" id="homeStatTotal">—</div><div class="stat-label">Total Reports</div></div>
+      <div class="live-stat"><div class="stat-number" style="color: var(--status-pending);" id="homeStatPending">—</div><div class="stat-label">Pending</div></div>
+      <div class="live-stat"><div class="stat-number" style="color: var(--status-progress);" id="homeStatProgress">—</div><div class="stat-label">In Progress</div></div>
+      <div class="live-stat"><div class="stat-number" style="color: var(--status-resolved);" id="homeStatResolved">—</div><div class="stat-label">Resolved</div></div>
+      <div class="live-stat"><div class="stat-number" style="color: var(--accent-dark);" id="homeStatUsers">—</div><div class="stat-label">Registered Users</div></div>
+      <div class="live-stat"><div class="stat-number" style="color: var(--severity-high);" id="homeStatAvgTime">—</div><div class="stat-label">Avg. Resolution (hrs)</div></div>
+    </div>
+
+    <!-- Severity Bar -->
+    <div class="neo-card" style="margin-bottom: 30px;">
+      <h4 style="margin-bottom: 8px;">Severity Distribution</h4>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">Breakdown of all reports by severity level</p>
+      <div class="severity-bar" id="severityBar">
+        <div style="width: 25%; background: var(--severity-low);"></div>
+        <div style="width: 25%; background: var(--severity-medium);"></div>
+        <div style="width: 25%; background: var(--severity-high);"></div>
+        <div style="width: 25%; background: var(--severity-critical);"></div>
+      </div>
+      <div class="flex justify-between" style="margin-top: 8px; font-size: 0.78rem; color: var(--text-muted);">
+        <span>🟢 Low: <strong id="sevLow">0</strong></span>
+        <span>🟡 Medium: <strong id="sevMedium">0</strong></span>
+        <span>🟠 High: <strong id="sevHigh">0</strong></span>
+        <span>🔴 Critical: <strong id="sevCritical">0</strong></span>
+      </div>
+    </div>
+
+    <!-- Type Breakdown -->
+    <h4 style="margin-bottom: 16px;">Reports by Emergency Type</h4>
+    <div class="type-breakdown" id="typeBreakdown">
+      <div class="loading-placeholder"><div class="spinner" style="margin: 0 auto;"></div><p style="margin-top: 12px;">Loading live data...</p></div>
+    </div>
+  </section>
+
+  <!-- Recent Resolved -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <h2>✅ Recently Resolved Incidents</h2>
+      <p>Latest emergencies that have been successfully resolved</p>
+    </div>
+    <div id="recentResolved">
+      <div class="loading-placeholder"><div class="spinner" style="margin: 0 auto;"></div></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <h2>🛡️ System Features</h2>
+      <p>Built for speed, reliability, and real-time communication</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">⚡</div><h4>Real-Time Alerts</h4><p>Admins receive instant push notifications the moment a new emergency is reported. Zero delay via WebSocket.</p></div>
+      <div class="feature-card"><div class="feature-icon">📍</div><h4>Map-Based Location</h4><p>Pinpoint exact incident location with interactive maps, GPS geolocation, and reverse geocoding.</p></div>
+      <div class="feature-card"><div class="feature-icon">📷</div><h4>Image Evidence</h4><p>Upload up to 4 photos per report. Images are auto-compressed for fast loading without quality loss.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔔</div><h4>Email Notifications</h4><p>Automated email alerts to admins for new reports and to users when their report status changes.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h4>Live Status Tracking</h4><p>Track your report from Pending → In Progress → Resolved with real-time status updates.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔒</div><h4>Secure & Reliable</h4><p>JWT authentication, bcrypt password hashing, rate limiting, and input validation for enterprise-grade security.</p></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <p>🚨 Emergency Alert & Incident Reporting System — University Minor Project &copy; 2026</p>
+  </footer>
+
+  <!-- Auth Modal -->
+  <div class="auth-modal-overlay hidden" id="authModal">
+    <div class="auth-card" style="position: relative;">
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+      <!-- Login -->
+      <div id="loginSection">
+        <div class="auth-header">
+          <div class="logo">🚨</div>
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account</p>
+        </div>
+        <form id="loginForm">
+          <div class="form-group"><label for="loginEmail">Email Address</label><input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required autocomplete="email"></div>
+          <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required autocomplete="current-password"></div>
+          <button type="submit" class="btn btn-primary w-full" id="loginBtn">Sign In</button>
+        </form>
+        <div class="auth-toggle">Don't have an account? <a href="#" id="showRegister">Create one</a></div>
+      </div>
+      <!-- Register -->
+      <div id="registerSection" class="hidden">
+        <div class="auth-header">
+          <div class="logo">🚨</div>
+          <h1>Create Account</h1>
+          <p>Join the Emergency Alert System</p>
+        </div>
+        <form id="registerForm">
+          <div class="form-group"><label for="regName">Full Name</label><input type="text" id="regName" class="form-control" placeholder="John Doe" required></div>
+          <div class="form-group"><label for="regEmail">Email Address</label><input type="email" id="regEmail" class="form-control" placeholder="you@example.com" required autocomplete="email"></div>
+          <div class="form-group"><label for="regPhone">Phone Number (optional)</label><input type="tel" id="regPhone" class="form-control" placeholder="+91 9876543210"></div>
+          <div class="form-group"><label for="regPassword">Password</label><input type="password" id="regPassword" class="form-control" placeholder="Min. 6 characters" required minlength="6" autocomplete="new-password"></div>
+          <div class="form-group"><label for="regConfirm">Confirm Password</label><input type="password" id="regConfirm" class="form-control" placeholder="Re-enter password" required autocomplete="new-password"></div>
+          <button type="submit" class="btn btn-primary w-full" id="registerBtn">Create Account</button>
+        </form>
+        <div class="auth-toggle">Already have an account? <a href="#" id="showLogin">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

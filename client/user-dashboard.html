@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Alert — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="logo-icon">🚨</div>
+      <span>Emergency Alert</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="nav-user">
+        <div class="avatar" id="userAvatar">U</div>
+        <span class="user-name" id="userName">User</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <h2>📋 My Dashboard</h2>
+        <p>Report emergencies and track your submissions in real-time</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="newReport">📝 New Report</button>
+        <button class="tab-btn" data-tab="myReports">📄 My Reports</button>
+        <button class="tab-btn" data-tab="profile">👤 Profile</button>
+      </div>
+
+      <!-- Tab: New Report -->
+      <div id="tab-newReport">
+        <div class="neo-card">
+          <h3 style="margin-bottom: 20px;">Report an Emergency</h3>
+          <form id="reportForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reportType">Emergency Type *</label>
+                <select id="reportType" class="form-control" required>
+                  <option value="">Select type...</option>
+                  <option value="accident">🚗 Accident</option>
+                  <option value="fire">🔥 Fire</option>
+                  <option value="crime">🚔 Crime</option>
+                  <option value="medical">🏥 Medical</option>
+                  <option value="natural_disaster">🌊 Natural Disaster</option>
+                  <option value="other">📌 Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reportSeverity">Severity Level *</label>
+                <select id="reportSeverity" class="form-control" required>
+                  <option value="low">🟢 Low</option>
+                  <option value="medium" selected>🟡 Medium</option>
+                  <option value="high">🟠 High</option>
+                  <option value="critical">🔴 Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reportTitle">Title *</label>
+              <input type="text" id="reportTitle" class="form-control" placeholder="Brief title for the emergency" required maxlength="100">
+            </div>
+
+            <div class="form-group">
+              <label for="reportDescription">Description *</label>
+              <textarea id="reportDescription" class="form-control" placeholder="Describe the emergency in detail..." required maxlength="2000" rows="4"></textarea>
+            </div>
+
+            <!-- Location Picker -->
+            <div class="form-group">
+              <label>Location *</label>
+              <input type="text" id="reportAddress" class="form-control" placeholder="Type address or click on the map" required>
+              <div class="map-container" style="margin-top: 10px;">
+                <div id="map"></div>
+              </div>
+              <input type="hidden" id="reportLat">
+              <input type="hidden" id="reportLng">
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">
+                📍 Click on the map to set the location, or type the address above. Use the "Locate Me" button for your current position.
+              </p>
+              <button type="button" class="btn btn-sm" style="margin-top: 8px;" id="locateMeBtn">📍 Locate Me</button>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group">
+              <label>Upload Images (optional, max 4)</label>
+              <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📷</div>
+                <p>Click or drag images here</p>
+                <p class="upload-hint">JPEG, PNG, WebP — Max 5MB each</p>
+              </div>
+              <input type="file" id="imageInput" multiple accept="image/jpeg,image/png,image/webp" style="display: none;">
+              <div class="image-preview-grid" id="imagePreviewGrid"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full" id="submitReportBtn">
+              🚨 Submit Emergency Report
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tab: My Reports -->
+      <div id="tab-myReports" class="hidden">
+        <div class="reports-list" id="myReportsList">
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No reports yet</h3>
+            <p>Submit an emergency report to see it here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Profile -->
+      <div id="tab-profile" class="hidden">
+        <div class="neo-card">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div>
+              <h3 id="profileDisplayName">User</h3>
+              <p style="color: var(--text-muted); font-size: 0.88rem;" id="profileDisplayEmail">user@example.com</p>
+            </div>
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--bg-secondary); margin: 24px 0;">
+          <h4 style="margin-bottom: 16px;">Edit Profile</h4>
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profileName">Full Name</label>
+              <input type="text" id="profileName" class="form-control" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label for="profilePhone">Phone Number</label>
+              <input type="tel" id="profilePhone" class="form-control" placeholder="+91 9876543210">
+            </div>
+            <hr style="border: none; border-top: 1px solid var(--bg-secondary); margin: 24px 0;">
+            <h4 style="margin-bottom: 16px;">Change Password <span style="font-weight: 400; font-size: 0.82rem; color: var(--text-muted);">(leave blank to keep current)</span></h4>
+            <div class="form-group">
+              <label for="profileCurrentPass">Current Password</label>
+              <input type="password" id="profileCurrentPass" class="form-control" placeholder="Enter current password" autocomplete="current-password">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profileNewPass">New Password</label>
+                <input type="password" id="profileNewPass" class="form-control" placeholder="Min. 6 characters" minlength="6" autocomplete="new-password">
+              </div>
+              <div class="form-group">
+                <label for="profileConfirmPass">Confirm New Password</label>
+                <input type="password" id="profileConfirmPass" class="form-control" placeholder="Re-enter new password" autocomplete="new-password">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="saveProfileBtn" style="margin-top: 8px;">💾 Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Detail Modal -->
+  <div class="modal-overlay hidden" id="reportDetailModal">
+    <div class="modal">
+      <button class="modal-close" id="closeReportDetail">✕</button>
+      <div id="reportDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox -->
+  <div class="lightbox hidden" id="lightbox">
+    <img src="" alt="Full image" id="lightboxImg">
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/userDashboard.js"></script>
+</body>
+</html>

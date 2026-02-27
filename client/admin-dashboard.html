@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Alert — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="logo-icon">🚨</div>
+      <span>Emergency Alert — Admin</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="notification-bell" id="notifBell" title="New alerts">
+        🔔
+        <span class="bell-badge hidden" id="bellBadge">0</span>
+      </div>
+      <button class="btn-nav btn-nav-outline" id="adminProfileToggle" style="padding: 6px 14px; font-size: 0.82rem; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; color: #f0f4f8; cursor: pointer; font-weight: 600; margin-right: 4px;">👤 Profile</button>
+      <div class="nav-user">
+        <div class="avatar" id="adminAvatar" style="background: linear-gradient(135deg, #ef4444, #dc2626);">A</div>
+        <span class="user-name" id="adminName">Admin</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <h2>👔 Admin Dashboard</h2>
+        <p>Monitor and manage all emergency reports in real-time</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon total">📊</div>
+          <div class="stat-info">
+            <h3 id="statTotal">0</h3>
+            <p>Total Reports</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon pending">⏳</div>
+          <div class="stat-info">
+            <h3 id="statPending">0</h3>
+            <p>Pending</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon progress">🔄</div>
+          <div class="stat-info">
+            <h3 id="statProgress">0</h3>
+            <p>In Progress</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon resolved">✅</div>
+          <div class="stat-info">
+            <h3 id="statResolved">0</h3>
+            <p>Resolved</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-control" id="searchInput" placeholder="Search reports..." style="padding-left: 40px;">
+        </div>
+        <select class="form-control" id="filterStatus">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Dismissed">Dismissed</option>
+        </select>
+        <select class="form-control" id="filterType">
+          <option value="">All Types</option>
+          <option value="accident">Accident</option>
+          <option value="fire">Fire</option>
+          <option value="crime">Crime</option>
+          <option value="medical">Medical</option>
+          <option value="natural_disaster">Natural Disaster</option>
+          <option value="other">Other</option>
+        </select>
+        <select class="form-control" id="filterSeverity">
+          <option value="">All Severity</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
+
+      <!-- Reports List -->
+      <div class="reports-list" id="adminReportsList">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>No reports found</h3>
+          <p>Emergency reports will appear here in real-time.</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center gap-1" style="margin-top: 24px;" id="paginationControls"></div>
+
+      <!-- Profile Section (toggled by nav) -->
+      <div id="adminProfileSection" class="hidden" style="margin-top: 30px;">
+        <div class="neo-card">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar" style="background: linear-gradient(135deg, #ef4444, #dc2626);">A</div>
+            <div>
+              <h3 id="profileDisplayName">Admin</h3>
+              <p style="color: var(--text-muted); font-size: 0.88rem;" id="profileDisplayEmail">admin@emergency.com</p>
+              <span class="badge badge-status-In\ Progress" style="font-size: 0.75rem; margin-top: 4px;">Admin</span>
+            </div>
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--bg-secondary); margin: 24px 0;">
+          <h4 style="margin-bottom: 16px;">Edit Profile</h4>
+          <form id="adminProfileForm">
+            <div class="form-group">
+              <label for="adminProfileName">Full Name</label>
+              <input type="text" id="adminProfileName" class="form-control" placeholder="Admin name" required>
+            </div>
+            <div class="form-group">
+              <label for="adminProfilePhone">Phone Number</label>
+              <input type="tel" id="adminProfilePhone" class="form-control" placeholder="+91 9876543210">
+            </div>
+            <hr style="border: none; border-top: 1px solid var(--bg-secondary); margin: 24px 0;">
+            <h4 style="margin-bottom: 16px;">Change Password <span style="font-weight: 400; font-size: 0.82rem; color: var(--text-muted);">(leave blank to keep current)</span></h4>
+            <div class="form-group">
+              <label for="adminCurrentPass">Current Password</label>
+              <input type="password" id="adminCurrentPass" class="form-control" placeholder="Enter current password" autocomplete="current-password">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="adminNewPass">New Password</label>
+                <input type="password" id="adminNewPass" class="form-control" placeholder="Min. 6 characters" minlength="6" autocomplete="new-password">
+              </div>
+              <div class="form-group">
+                <label for="adminConfirmPass">Confirm New Password</label>
+                <input type="password" id="adminConfirmPass" class="form-control" placeholder="Re-enter new password" autocomplete="new-password">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="saveAdminProfileBtn" style="margin-top: 8px;">💾 Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Detail Modal -->
+  <div class="modal-overlay hidden" id="reportDetailModal">
+    <div class="modal" style="max-width: 700px;">
+      <button class="modal-close" id="closeReportDetail">✕</button>
+      <div id="reportDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox -->
+  <div class="lightbox hidden" id="lightbox">
+    <img src="" alt="Full image" id="lightboxImg">
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Audio alert for new reports -->
+  <audio id="alertSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRlYFAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YTIFAACAgICAgICAgICAgICAgICAgICA/4CAgP+AgIB+gICAfoCAgH6AgIB+gHqAeoB6gH6AfoD/gP+A/4D/gP+A/4D/gP+AgICAgP+AgICAgICA/4CAgP+AgIB8gICAfoCAgH6AgID+gICA/oCAgHqAgIB6gICAeoB+gP+A/4D/gP+A/4D/gP+A/4CAgICAgICAgICAgICAgICAgICAgICA" type="audio/wav">
+  </audio>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/adminDashboard.js"></script>
+</body>
+</html>
