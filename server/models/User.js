@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['user', 'admin', 'responder'],
     default: 'user'
   },
   avatar: {
@@ -39,7 +39,15 @@ const userSchema = new mongoose.Schema({
   notificationsEnabled: {
     type: Boolean,
     default: true
-  }
+  },
+  active: {
+    type: Boolean,
+    default: true
+  },
+  // Security extras (Major Project)
+  resetPasswordToken: { type: String, default: null },
+  resetPasswordExpires: { type: Date, default: null },
+  refreshTokens: [{ type: String }]
 }, {
   timestamps: true
 });

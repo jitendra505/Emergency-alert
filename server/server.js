@@ -64,6 +64,11 @@ app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/stats', require('./routes/stats'));
+app.use('/api/responders', require('./routes/responders'));
+app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/audit', require('./routes/audit'));
+app.use('/api/hotspots', require('./routes/hotspots'));
 
 // Health check
 app.get('/api/health', (req, res) => {
